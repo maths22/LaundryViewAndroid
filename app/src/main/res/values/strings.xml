@@ -3,7 +3,7 @@
     <string name="school_preference_file_key">com.maths22.laundryview.school</string>
     <string name="notify_preference_file_key">com.maths22.laundryview.notify</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_laundry_room_chooser">Laundry Rooms</string>
+    <string name="title_activity_laundry_room_chooser">LaundryView</string>
     <string name="title_activity_machine_status">Machine Status</string>
     <string name="title_activity_school_finder">School Finder</string>
     <string name="search_hint">School name</string>
