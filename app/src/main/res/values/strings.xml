@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">LaundryView</string>
+    <string name="school_preference_file_key">com.maths22.laundryview.school</string>
+    <string name="notify_preference_file_key">com.maths22.laundryview.notify</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_laundry_room_chooser">Laundry Rooms</string>
+    <string name="title_activity_machine_status">Machine Status</string>
+    <string name="title_activity_school_finder">School Finder</string>
+    <string name="search_hint">School name</string>
+    <plurals name="time_remaining">
+        <item quantity="one">%d minute remaining</item>
+        <item quantity="other">%d minutes remaining</item>
+    </plurals>
+    <string-array name="machine_status_enum">
+        <item>Available</item>
+        <item>In use</item>
+        <item>Done</item>
+        <item>Out of Service</item>
+        <item>Unknown</item>
+    </string-array>
+    <string-array name="machine_type_enum">
+        <item>washer</item>
+        <item>dryer</item>
+    </string-array>
+</resources>
