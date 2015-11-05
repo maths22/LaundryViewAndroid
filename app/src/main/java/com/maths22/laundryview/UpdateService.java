@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.maths22.laundryview.data.APIException;
@@ -25,7 +26,7 @@ import java.util.Set;
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
- * <p>
+ * <p/>
  */
 public class UpdateService extends IntentService {
 
@@ -107,12 +108,22 @@ public class UpdateService extends IntentService {
                 PendingIntent notifyPIntent =
                         PendingIntent.getActivity(this.getApplicationContext(), 0, new Intent(), 0);
 
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(this)
-                                .setSmallIcon(R.drawable.washing_machine)
-                                .setAutoCancel(true)
-                                .setContentIntent(notifyPIntent)
-                                .setDefaults(Notification.DEFAULT_ALL);
+                NotificationCompat.Builder mBuilder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mBuilder =
+                            new NotificationCompat.Builder(this)
+                                    .setSmallIcon(R.drawable.washing_machine)
+                                    .setAutoCancel(true)
+                                    .setContentIntent(notifyPIntent)
+                                    .setDefaults(Notification.DEFAULT_ALL);
+                } else {
+                    mBuilder =
+                            new NotificationCompat.Builder(this)
+                                    .setSmallIcon(R.drawable.washing_machine_fallback)
+                                    .setAutoCancel(true)
+                                    .setContentIntent(notifyPIntent)
+                                    .setDefaults(Notification.DEFAULT_ALL);
+                }
 
 
                 switch (type) {

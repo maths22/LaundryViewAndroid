@@ -51,7 +51,7 @@ public class LVAPILaundryRoomLoader implements LaundryRoomLoader, Serializable {
 
         SortedSet<LaundryRoom> set = new TreeSet<>();
 
-        ResponseBody rmstr = null;
+        ResponseBody rmstr;
         try {
             Response<ResponseBody> rsp = rooms.execute();
             if (!rsp.isSuccess()) {
@@ -64,12 +64,10 @@ public class LVAPILaundryRoomLoader implements LaundryRoomLoader, Serializable {
             throw new APIException(e.getCause());
         }
 
-        JSONArray jsonList = null;
+        JSONArray jsonList;
         try {
             jsonList = new JSONArray(rmstr.string());
-        } catch (JSONException e) {
-            throw new APIException(e.getCause());
-        } catch (IOException e) {
+        } catch (JSONException | IOException e) {
             throw new APIException(e.getCause());
         }
 

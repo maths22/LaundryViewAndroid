@@ -54,7 +54,7 @@ public class LVAPIMachineLoader implements MachineLoader, Serializable {
 
         Call<ResponseBody> machines = service.machineStatus(laundryRoom.getId());
 
-        ResponseBody rmstr = null;
+        ResponseBody rmstr;
         try {
             Response<ResponseBody> rsp = machines.execute();
             if (!rsp.isSuccess()) {
@@ -66,7 +66,7 @@ public class LVAPIMachineLoader implements MachineLoader, Serializable {
             throw new APIException(e.getCause());
         }
 
-        JSONObject jsonMap = null;
+        JSONObject jsonMap;
         try {
             jsonMap = new JSONObject(rmstr.string());
         } catch (JSONException | IOException e) {

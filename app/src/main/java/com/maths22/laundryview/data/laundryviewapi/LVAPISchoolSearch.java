@@ -48,7 +48,7 @@ public class LVAPISchoolSearch implements SchoolSearch, Serializable {
 
         SortedSet<School> set = new TreeSet<>();
 
-        ResponseBody rmstr = null;
+        ResponseBody rmstr;
         try {
             Response<ResponseBody> rsp = rooms.execute();
             if (!rsp.isSuccess()) {
@@ -60,7 +60,7 @@ public class LVAPISchoolSearch implements SchoolSearch, Serializable {
             throw new APIException(e.getCause());
         }
 
-        JSONArray jsonList = null;
+        JSONArray jsonList;
         try {
             jsonList = new JSONArray(rmstr.string());
         } catch (JSONException | IOException e) {
