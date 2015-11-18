@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
+import com.maths22.laundryview.data.Status;
 
 import java.util.HashSet;
 import java.util.List;
@@ -69,6 +70,7 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
                     icon.setAlpha(66);
                 }
 
+
                 ((GradientDrawable) tvNumber.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color.redAccent));
                 break;
             case OUT_OF_SERVICE:
@@ -79,6 +81,12 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         }
         String status = getContext().getResources().getStringArray(R.array.machine_status_enum)[machine.getStatus().ordinal()];
         tvName.setText(status);
+        if(machine.getStatus() == Status.IN_USE) {
+            icon.setVisibility(View.VISIBLE);
+        } else {
+            icon.setVisibility(View.INVISIBLE);
+        }
+
         if (machine.getTimeRemaining() != Machine.NO_TIME) {
             tvHome.setText(getContext().getResources().getQuantityString(R.plurals.time_remaining, machine.getTimeRemaining(), machine.getTimeRemaining()));
             tvHome.setVisibility(View.VISIBLE);
