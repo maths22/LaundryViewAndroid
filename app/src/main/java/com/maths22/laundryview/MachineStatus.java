@@ -2,15 +2,20 @@ package com.maths22.laundryview;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
+import com.maths22.laundryview.data.DataHandler;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.MachineType;
 
@@ -27,6 +32,7 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
     @Bind(R.id.tabs)
     TabLayout tabs;
 
+    private DataHandler dataHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +51,15 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
         });*/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        room = (LaundryRoom) intent.getSerializableExtra(LaundryRoomChooser.EXTRA_MESSAGE);
+        dataHandler = new DataHandler();
+
+
+        room = dataHandler.getLaundryRoom();
+        SharedPreferences sharedPref = getSharedPreferences(
+                getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
+        room.setId(sharedPref.getString("laundry_room_id", ""));
+        room.setName(sharedPref.getString("laundry_room_name", ""));
+
         setTitle(room.getName());
 
         ButterKnife.bind(this);
@@ -98,5 +111,31 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        clearPrefs();
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                clearPrefs();
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void clearPrefs() {
+        SharedPreferences sharedPref = getSharedPreferences(
+                getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove("laundry_room_id");
+        editor.remove("laundry_room_name");
+        editor.apply();
+    }
 
 }

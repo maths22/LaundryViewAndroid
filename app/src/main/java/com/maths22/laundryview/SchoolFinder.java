@@ -125,6 +125,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
             searchView.setOnQueryTextListener(this);
             searchView.setIconifiedByDefault(false);
             searchView.requestFocusFromTouch();
+            searchView.setQueryHint(getString(R.string.search_hint));
         }
 
         return true;

@@ -77,8 +77,15 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
                                     int position, long id) {
                 LaundryRoomArrayAdapter arrayAdapter = (LaundryRoomArrayAdapter) parent.getAdapter();
                 LaundryRoom room = arrayAdapter.getItem(position);
+                SharedPreferences sharedPref = getSharedPreferences(
+                        getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("laundry_room_id", room.getId());
+                editor.putString("laundry_room_name", room.getName());
+                editor.apply();
+
+
                 Intent intent = new Intent(LaundryRoomChooser.this, MachineStatus.class);
-                intent.putExtra(EXTRA_MESSAGE, room);
                 startActivity(intent);
 
             }
@@ -113,7 +120,12 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
             dataHandler.getSchool().setId(sharedPref.getString("school_id", "0"));
             dataHandler.getSchool().setName(sharedPref.getString("school_name", ""));
             setTitle(dataHandler.getSchool().getName());
-            this.refresh();
+            if (sharedPref.contains("laundry_room_id")) {
+                Intent intent = new Intent(LaundryRoomChooser.this, MachineStatus.class);
+                startActivity(intent);
+            } else {
+                this.refresh();
+            }
         } else {
             Intent intent = new Intent(LaundryRoomChooser.this, SchoolFinder.class);
             startActivity(intent);
