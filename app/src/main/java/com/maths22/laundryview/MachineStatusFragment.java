@@ -8,20 +8,18 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Switch;
 
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
 import com.maths22.laundryview.data.MachineType;
-import com.maths22.laundryview.data.Status;
 
 import org.acra.ACRA;
 
@@ -102,39 +100,8 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
             @Override
             public void onItemClick(AdapterView parent, View view,
                                     int position, long id) {
-                MachineStatusArrayAdapter arrayAdapter = (MachineStatusArrayAdapter) parent.getAdapter();
-                final Machine machine = arrayAdapter.getItem(position);
-                final ImageView icon = (ImageView) view.findViewById(R.id.alertIcon);
-                if (machine.getStatus() == Status.IN_USE) {
-                    final NotificationManager notifications = new NotificationManager(getActivity());
-                    if (!notifications.notificationSet(lr, machine)) {
-                        notifications.setNotification(lr, machine);
-                        icon.setImageResource(R.drawable.ic_alarm_on_black_24dp);
-                        icon.setAlpha(138);
-                        Snackbar.make(view, "Alert set for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
-                                .setAction("Undo", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        notifications.removeNotification(lr, machine);
-                                        icon.setImageResource(R.drawable.ic_alarm_off_black_24dp);
-                                        icon.setAlpha(66);
-                                    }
-                                }).show();
-                    } else {
-                        notifications.removeNotification(lr, machine);
-                        icon.setImageResource(R.drawable.ic_alarm_off_black_24dp);
-                        icon.setAlpha(66);
-                        Snackbar.make(view, "Alert removed for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
-                                .setAction("Undo", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        notifications.setNotification(lr, machine);
-                                        icon.setImageResource(R.drawable.ic_alarm_on_black_24dp);
-                                        icon.setAlpha(138);
-                                    }
-                                }).show();
-                    }
-                }
+                final Switch alertSwitch = (Switch) view.findViewById(R.id.alertSwitch);
+                alertSwitch.toggle();
             }
         });
         return v;

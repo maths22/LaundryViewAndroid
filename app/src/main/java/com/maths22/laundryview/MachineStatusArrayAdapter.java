@@ -3,12 +3,15 @@ package com.maths22.laundryview;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.maths22.laundryview.data.LaundryRoom;
@@ -34,16 +37,18 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Machine machine = getItem(position);
+        final Machine machine = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_machine_status, parent, false);
         }
+        final View myView = convertView;
         // Lookup view for data population
         TextView tvNumber = (TextView) convertView.findViewById(R.id.number);
         TextView tvName = (TextView) convertView.findViewById(R.id.firstLine);
         TextView tvHome = (TextView) convertView.findViewById(R.id.secondLine);
-        ImageView icon = (ImageView) convertView.findViewById(R.id.alertIcon);
+        final Switch alertSwitch = (Switch) convertView.findViewById(R.id.alertSwitch);
+        final ImageView alertIcon = (ImageView) convertView.findViewById(R.id.alertIcon);
 
         // Populate the data into the template view using the data object
         tvNumber.setText(machine.getNumber());
@@ -62,13 +67,7 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
                         new HashSet<String>()));
 
                 final String record = lr.getName() + "|" + lr.getId() + "|" + machine.getId();
-                if (objs.contains(record)) {
-                    icon.setImageResource(R.drawable.ic_alarm_on_black_24dp);
-                    icon.setAlpha(138);
-                } else {
-                    icon.setImageResource(R.drawable.ic_alarm_off_black_24dp);
-                    icon.setAlpha(66);
-                }
+                alertSwitch.setChecked(objs.contains(record));
 
 
                 ((GradientDrawable) tvNumber.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color.redAccent));
@@ -82,9 +81,11 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         String status = getContext().getResources().getStringArray(R.array.machine_status_enum)[machine.getStatus().ordinal()];
         tvName.setText(status);
         if(machine.getStatus() == Status.IN_USE) {
-            icon.setVisibility(View.VISIBLE);
+            alertSwitch.setVisibility(View.VISIBLE);
+            alertIcon.setVisibility(View.VISIBLE);
         } else {
-            icon.setVisibility(View.INVISIBLE);
+            alertSwitch.setVisibility(View.INVISIBLE);
+            alertIcon.setVisibility(View.INVISIBLE);
         }
 
         if (machine.getTimeRemaining() != Machine.NO_TIME) {
@@ -93,6 +94,36 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         } else {
             tvHome.setVisibility(View.GONE);
         }
+
+        alertSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (machine.getStatus() == Status.IN_USE) {
+                    final NotificationManager notifications = new NotificationManager(MachineStatusArrayAdapter.this.getContext());
+                    if (isChecked) {
+                        notifications.setNotification(lr, machine);
+                        Snackbar.make(myView, "Alert set for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
+                                .setAction("Undo", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        notifications.removeNotification(lr, machine);
+                                        alertSwitch.setChecked(false);
+                                    }
+                                }).show();
+                    } else {
+                        notifications.removeNotification(lr, machine);
+                        Snackbar.make(myView, "Alert removed for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
+                                .setAction("Undo", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        notifications.setNotification(lr, machine);
+                                        alertSwitch.setChecked(true);
+                                    }
+                                }).show();
+                    }
+                }
+            }
+        });
         // Return the completed view to render on screen
         return convertView;
     }

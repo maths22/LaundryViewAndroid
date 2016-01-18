@@ -7,6 +7,9 @@
     <string name="title_activity_machine_status">Machine Status</string>
     <string name="title_activity_school_finder">School Finder</string>
     <string name="search_hint">School name</string>
+    <string name="cant_find_location">Can\'t find your location?</string>
+    <string name="search_suggestions">Search Suggestions</string>
+    <string name="search_help_main">If you have a LaundryView link, try searching the number or word indicated below:</string>
     <plurals name="time_remaining">
         <item quantity="one">%d minute remaining</item>
         <item quantity="other">%d minutes remaining</item>

@@ -1,15 +1,14 @@
 package com.maths22.laundryview;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.maths22.laundryview.data.APIException;
@@ -36,6 +37,10 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
 
     @Bind(R.id.schoolListView)
     ListView schoolFinderListView;
+    @Bind(R.id.emptyLayout)
+    LinearLayout emptyLayout;
+    @Bind(R.id.searchSuggestions)
+    Button searchSuggestions;
 
     private DataHandler dataHandler;
 
@@ -74,6 +79,18 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
                 editor.putString("school_name", school.getName());
                 editor.apply();
                 finish();
+            }
+        });
+
+        schoolFinderListView.setEmptyView(emptyLayout);
+
+        searchSuggestions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SchoolFinder.this);
+                builder.setView(R.layout.dialog_search_help);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
@@ -171,12 +188,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
                         alertDialog.setTitle("Error");
                         alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
                         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-
-                            }
-                        });
+                        //TODO: test this dialog
 
                         alertDialog.show();
                         return;
