@@ -27,7 +27,6 @@ import javax.inject.Provider;
 
 import retrofit.Call;
 import retrofit.Response;
-import retrofit.Retrofit;
 
 /**
  * Created by maths22 on 10/27/15.
@@ -35,10 +34,12 @@ import retrofit.Retrofit;
 //TODO: Real error handling
 public class LVAPIMachineLoader implements MachineLoader, Serializable {
     private Provider<Machine> machineProvider;
+    private LVAPIClient client;
 
     @Inject
-    public LVAPIMachineLoader(Provider<Machine> machineProvider) {
+    public LVAPIMachineLoader(Provider<Machine> machineProvider, LVAPIClient client) {
         this.machineProvider = machineProvider;
+        this.client = client;
     }
 
     @Override
@@ -46,11 +47,7 @@ public class LVAPIMachineLoader implements MachineLoader, Serializable {
         Map<MachineType, Collection<Machine>> ret = new EnumMap<>(MachineType.class);
 
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://brlcad.org:8081")
-                .build();
-
-        LVAPIService service = retrofit.create(LVAPIService.class);
+        LVAPIService service = client.getService();
 
         Call<ResponseBody> machines = service.machineStatus(laundryRoom.getId());
 

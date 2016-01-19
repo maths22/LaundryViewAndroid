@@ -24,7 +24,6 @@ import javax.inject.Provider;
 
 import retrofit.Call;
 import retrofit.Response;
-import retrofit.Retrofit;
 
 /**
  * Created by maths22 on 10/27/15.
@@ -32,20 +31,18 @@ import retrofit.Retrofit;
 //TODO: Real error handling
 public class LVAPILaundryRoomLoader implements LaundryRoomLoader, Serializable {
     private Provider<LaundryRoom> laundryRoomProvider;
+    private LVAPIClient client;
 
     @Inject
-    public LVAPILaundryRoomLoader(Provider<LaundryRoom> laundryRoomProvider) {
+    public LVAPILaundryRoomLoader(Provider<LaundryRoom> laundryRoomProvider, LVAPIClient client) {
         this.laundryRoomProvider = laundryRoomProvider;
+        this.client = client;
     }
 
     @Override
     public Collection<LaundryRoom> findLaundryRooms(School school) throws APIException {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://brlcad.org:8081")
-                .build();
-
-        LVAPIService service = retrofit.create(LVAPIService.class);
+        LVAPIService service = client.getService();
 
         Call<ResponseBody> rooms = service.findLaundryRooms(school.getId());
 

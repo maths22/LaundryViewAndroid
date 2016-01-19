@@ -10,12 +10,13 @@ import retrofit.http.Path;
  * Created by maths22 on 10/27/15.
  */
 public interface LVAPIService {
-    @GET("/laundryview/findLaundryRooms/{schoolid}")
+
+    @GET("/findLaundryRooms/{schoolid}")
     Call<ResponseBody> findLaundryRooms(@Path("schoolid") String schoolId);
 
-    @GET("/laundryview/findSchools/{name}")
+    @GET("/findSchools/{name}")
     Call<ResponseBody> findSchools(@Path("name") String name);
 
-    @GET("/laundryview/machineStatus/{roomId}")
+    @GET("/machineStatus/{roomId}")
     Call<ResponseBody> machineStatus(@Path("roomId") String roomId);
 }

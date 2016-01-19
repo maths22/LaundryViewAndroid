@@ -21,7 +21,6 @@ import javax.inject.Provider;
 
 import retrofit.Call;
 import retrofit.Response;
-import retrofit.Retrofit;
 
 /**
  * Created by maths22 on 10/27/15.
@@ -30,19 +29,17 @@ import retrofit.Retrofit;
 public class LVAPISchoolSearch implements SchoolSearch, Serializable {
 
     private Provider<School> schoolProvider;
+    private LVAPIClient client;
 
     @Inject
-    public LVAPISchoolSearch(Provider<School> schoolProvider) {
+    public LVAPISchoolSearch(Provider<School> schoolProvider, LVAPIClient client) {
         this.schoolProvider = schoolProvider;
+        this.client = client;
     }
 
     @Override
     public SortedSet<School> findSchools(String name) throws APIException {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://brlcad.org:8081/laundryview")
-                .build();
-
-        LVAPIService service = retrofit.create(LVAPIService.class);
+        LVAPIService service = client.getService();
 
         Call<ResponseBody> rooms = service.findSchools(name);
 
