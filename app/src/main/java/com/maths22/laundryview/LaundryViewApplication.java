@@ -13,7 +13,7 @@ import org.acra.sender.HttpSender;
 @ReportsCrashes(
         httpMethod = HttpSender.Method.PUT,
         reportType = HttpSender.Type.JSON,
-        formUri = "http://pi.maths22.com:5984/acra-laundryview/_design/acra-storage/_update/report",
+        formUri = "http://brlcad.org:5984/acra-laundryview/_design/acra-storage/_update/report",
         formUriBasicAuthLogin = "defaultReporter",
         formUriBasicAuthPassword = "we3Evumu",
         additionalSharedPreferences = {"com.maths22.laundryview.school", "com.maths22.laundryview.notify"}
