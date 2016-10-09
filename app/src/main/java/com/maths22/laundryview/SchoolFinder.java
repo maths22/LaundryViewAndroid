@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.DataHandler;
 import com.maths22.laundryview.data.School;
@@ -43,6 +46,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
     Button searchSuggestions;
 
     private DataHandler dataHandler;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +98,21 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
             }
         });
 
+        // Obtain the shared Tracker instance.
+        LaundryViewApplication application = (LaundryViewApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+
         handleIntent(getIntent());
+    }
+
+    private static final String name = "SchoolFinder";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("laundryview", "Setting screen name: " + name);
+        mTracker.setScreenName("Image~" + name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

@@ -12,8 +12,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.maths22.laundryview.data.DataHandler;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.MachineType;
@@ -32,6 +35,7 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
     TabLayout tabs;
 
     private DataHandler dataHandler;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,19 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
         setupViewPager(viewPager);
         tabs.setupWithViewPager(viewPager);
 
+        // Obtain the shared Tracker instance.
+        LaundryViewApplication application = (LaundryViewApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
+    private static final String name = "MachineStatus";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("laundryview", "Setting screen name: " + name);
+        mTracker.setScreenName("Image~" + name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private void setupViewPager(ViewPager viewPager) {

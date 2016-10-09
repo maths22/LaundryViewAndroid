@@ -1,15 +1,10 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
-import android.util.Log;
-
+import com.appspot.laundryview_1197.laundryView.LaundryView;
+import com.appspot.laundryview_1197.laundryView.model.SchoolCollection;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.School;
 import com.maths22.laundryview.data.SchoolSearch;
-import com.squareup.okhttp.ResponseBody;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,9 +13,6 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import retrofit.Call;
-import retrofit.Response;
 
 /**
  * Created by maths22 on 10/27/15.
@@ -39,41 +31,25 @@ public class LVAPISchoolSearch implements SchoolSearch, Serializable {
 
     @Override
     public SortedSet<School> findSchools(String name) throws APIException {
-        LVAPIService service = client.getService();
-
-        Call<ResponseBody> rooms = service.findSchools(name);
+        LaundryView.LaundryViewEndpoint service = client.getService();
 
         SortedSet<School> set = new TreeSet<>();
 
-        ResponseBody rmstr;
+        SchoolCollection schools;
         try {
-            Response<ResponseBody> rsp = rooms.execute();
-            if (!rsp.isSuccess()) {
-                Log.w("laundryview", rsp.errorBody().string());
+            schools = service.findSchools(name).execute();
+            if (schools == null) {
                 throw new APIException("Server error");
             }
-            rmstr = rsp.body();
         } catch (IOException e) {
-            throw new APIException(e.getCause());
+            throw new APIException(e);
         }
 
-        JSONArray jsonList;
-        try {
-            jsonList = new JSONArray(rmstr.string());
-        } catch (JSONException | IOException e) {
-            throw new APIException(e.getCause());
-        }
-
-        for (int i = 0; i < jsonList.length(); i++) {
-            try {
-                JSONObject obj = jsonList.getJSONObject(i);
-                School s = schoolProvider.get();
-                s.setId(obj.getString("id"));
-                s.setName(obj.getString("name"));
-                set.add(s);
-            } catch (JSONException e) {
-                throw new APIException(e.getCause());
-            }
+        for (com.appspot.laundryview_1197.laundryView.model.School school : schools.getItems()) {
+            School s = schoolProvider.get();
+            s.setId(school.getId());
+            s.setName(school.getName());
+            set.add(s);
 
         }
         return set;

@@ -1,5 +1,7 @@
 package com.maths22.laundryview.data;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,7 +78,7 @@ public class LaundryRoom implements Comparable<LaundryRoom>, Serializable {
     }
 
     @Override
-    public int compareTo(LaundryRoom another) {
+    public int compareTo(@NonNull LaundryRoom another) {
         return this.getName().compareTo(another.getName());
     }
 }

@@ -1,5 +1,7 @@
 package com.maths22.laundryview.data;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.SortedSet;
@@ -59,7 +61,7 @@ public class School implements Comparable<School>, Serializable {
     }
 
     @Override
-    public int compareTo(School another) {
+    public int compareTo(@NonNull School another) {
         return this.getName().compareTo(another.getName());
     }
 }

@@ -1,5 +1,7 @@
 package com.maths22.laundryview.data;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
 import javax.inject.Inject;
@@ -61,7 +63,7 @@ public class Machine implements Comparable<Machine>, Serializable {
     }
 
     @Override
-    public int compareTo(Machine another) {
+    public int compareTo(@NonNull Machine another) {
         return this.getNumber().compareTo(another.getNumber());
     }
 }

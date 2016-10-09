@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
@@ -7,8 +8,8 @@ android {
         applicationId "com.maths22.laundryview"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 4
-        versionName '0.3'
+        versionCode 8
+        versionName '0.5'
     }
     buildTypes {
         release {
@@ -34,7 +35,10 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0.1'
     provided 'com.google.dagger:dagger-compiler:2.0.1'
     compile 'org.glassfish:javax.annotation:10.0-b28'
-    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'ch.acra:acra:4.6.2'
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
+    compile files('libs/laundryView-v1-1.21.0-SNAPSHOT.jar')
+    compile 'com.google.api-client:google-api-client-android:1.21.0'
 }

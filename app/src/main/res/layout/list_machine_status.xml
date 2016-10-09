@@ -63,6 +63,6 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/alertSwitch"
         android:layout_toStartOf="@+id/alertSwitch"
-        android:tint="@android:color/tertiary_text_light" />
+        android:tint="#808080" />
 
 </RelativeLayout>

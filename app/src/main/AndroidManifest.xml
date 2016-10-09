@@ -3,6 +3,7 @@
     package="com.maths22.laundryview">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
@@ -62,6 +63,20 @@
         <service
             android:name=".UpdateService"
             android:exported="false"></service>
+
+        <!-- Handle the creation, rotation, and updating of registration tokens -->
+        <service
+            android:name="com.maths22.laundryview.notifications.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.maths22.laundryview.notifications.RegistrationIntentService"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

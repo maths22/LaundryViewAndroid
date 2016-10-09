@@ -23,7 +23,6 @@ public class NotificationManager {
         String record = lr.getName() + "|" + lr.getId() + "|" + machine.getId();
         SharedPreferences sharedPref = c.getSharedPreferences(
                 c.getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
         Set<String> objs = new HashSet<>(sharedPref.getStringSet(c.getString(R.string.notify_preference_file_key),
                 new HashSet<String>()));
         return objs.contains(record);

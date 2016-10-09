@@ -1,17 +1,13 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
-import android.util.Log;
-
+import com.appspot.laundryview_1197.laundryView.LaundryView;
+import com.appspot.laundryview_1197.laundryView.model.LaundryRoomCollection;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.LaundryRoomLoader;
 import com.maths22.laundryview.data.School;
-import com.squareup.okhttp.ResponseBody;
 
 import org.acra.ACRA;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,9 +17,6 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import retrofit.Call;
-import retrofit.Response;
 
 /**
  * Created by maths22 on 10/27/15.
@@ -42,43 +35,25 @@ public class LVAPILaundryRoomLoader implements LaundryRoomLoader, Serializable {
     @Override
     public Collection<LaundryRoom> findLaundryRooms(School school) throws APIException {
 
-        LVAPIService service = client.getService();
-
-        Call<ResponseBody> rooms = service.findLaundryRooms(school.getId());
+        LaundryView.LaundryViewEndpoint service = client.getService();
 
         SortedSet<LaundryRoom> set = new TreeSet<>();
-
-        ResponseBody rmstr;
+        LaundryRoomCollection rooms;
         try {
-            Response<ResponseBody> rsp = rooms.execute();
-            if (!rsp.isSuccess()) {
-                Log.w("laundryview", rsp.errorBody().string());
+            rooms = service.findLaundryRooms(school.getId()).execute();
+            if (rooms == null) {
                 throw new APIException("Server error");
             }
-            rmstr = rsp.body();
         } catch (IOException e) {
             ACRA.getErrorReporter().handleException(e);
-            throw new APIException(e.getCause());
+            throw new APIException(e);
         }
 
-        JSONArray jsonList;
-        try {
-            jsonList = new JSONArray(rmstr.string());
-        } catch (JSONException | IOException e) {
-            throw new APIException(e.getCause());
-        }
-
-        for (int i = 0; i < jsonList.length(); i++) {
-            try {
-                JSONObject obj = jsonList.getJSONObject(i);
-                LaundryRoom lr = laundryRoomProvider.get();
-                lr.setId(obj.getString("id"));
-                lr.setName(obj.getString("name"));
-                set.add(lr);
-            } catch (JSONException e) {
-                throw new APIException(e.getCause());
-            }
-
+        for (com.appspot.laundryview_1197.laundryView.model.LaundryRoom room : rooms.getItems()) {
+            LaundryRoom lr = laundryRoomProvider.get();
+            lr.setId(room.getId());
+            lr.setName(room.getName());
+            set.add(lr);
         }
         return set;
     }

@@ -16,6 +16,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.DataHandler;
 import com.maths22.laundryview.data.LaundryRoom;
@@ -41,6 +44,7 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
     public final static String EXTRA_MESSAGE = "com.maths22.laundryview.MESSAGE";
 
     private DataHandler dataHandler;
+    private Tracker mTracker;
 
     @Bind(R.id.refreshLaundryRoomLayout)
     SwipeRefreshLayout refreshLaundryRoomLayout;
@@ -103,8 +107,12 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
                 5000, 60000,
                 PendingIntent.getBroadcast(this, 1, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT));
 
-
+        // Obtain the shared Tracker instance.
+        LaundryViewApplication application = (LaundryViewApplication) getApplication();
+        mTracker = application.getDefaultTracker();
     }
+
+    private static final String name = "LaundryRoomChooser";
 
     @Override
     public void onResume() {
@@ -115,6 +123,10 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
         }
         SharedPreferences sharedPref = getSharedPreferences(
                 getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
+
+        Log.i("laundryview", "Setting screen name: " + name);
+        mTracker.setScreenName("Image~" + name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         if (sharedPref.contains("school_id")) {
             dataHandler.getSchool().setId(sharedPref.getString("school_id", "0"));

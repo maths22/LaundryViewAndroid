@@ -1,32 +1,27 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
-import android.util.Log;
-
+import com.appspot.laundryview_1197.laundryView.LaundryView;
+import com.appspot.laundryview_1197.laundryView.model.RoomMachineStatus;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
 import com.maths22.laundryview.data.MachineLoader;
 import com.maths22.laundryview.data.MachineType;
 import com.maths22.laundryview.data.Status;
-import com.squareup.okhttp.ResponseBody;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.acra.ACRA;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import retrofit.Call;
-import retrofit.Response;
 
 /**
  * Created by maths22 on 10/27/15.
@@ -47,54 +42,35 @@ public class LVAPIMachineLoader implements MachineLoader, Serializable {
         Map<MachineType, Collection<Machine>> ret = new EnumMap<>(MachineType.class);
 
 
-        LVAPIService service = client.getService();
+        LaundryView.LaundryViewEndpoint service = client.getService();
 
-        Call<ResponseBody> machines = service.machineStatus(laundryRoom.getId());
+        RoomMachineStatus machines;
 
-        ResponseBody rmstr;
         try {
-            Response<ResponseBody> rsp = machines.execute();
-            if (!rsp.isSuccess()) {
-                Log.w("laundryview", rsp.errorBody().string());
+            machines = service.machineStatus(laundryRoom.getId()).execute();
+            if (machines == null) {
                 throw new APIException("Server error");
             }
-            rmstr = rsp.body();
         } catch (IOException e) {
-            throw new APIException(e.getCause());
+            ACRA.getErrorReporter().handleException(e);
+            throw new APIException(e);
         }
 
-        JSONObject jsonMap;
-        try {
-            jsonMap = new JSONObject(rmstr.string());
-        } catch (JSONException | IOException e) {
-            throw new APIException(e.getCause());
-        }
-
-        try {
-            ret.put(MachineType.WASHER, readJsonSet(jsonMap.getJSONArray("washers")));
-        } catch (JSONException e) {
-            throw new APIException(e.getCause());
-        }
-        try {
-            ret.put(MachineType.DRYER, readJsonSet(jsonMap.getJSONArray("dryers")));
-        } catch (JSONException e) {
-            throw new APIException(e.getCause());
-        }
+        ret.put(MachineType.WASHER, readJsonSet(machines.getWashers()));
+        ret.put(MachineType.DRYER, readJsonSet(machines.getDryers()));
 
         return ret;
     }
 
-    private Collection<Machine> readJsonSet(JSONArray jsonList) throws JSONException {
+    private Collection<Machine> readJsonSet(List<com.appspot.laundryview_1197.laundryView.model.Machine> machines)  {
         SortedSet<Machine> set = new TreeSet<>();
-        for (int i = 0; i < jsonList.length(); i++) {
-
-            JSONObject obj = jsonList.getJSONObject(i);
+        for (com.appspot.laundryview_1197.laundryView.model.Machine m : machines) {
             Machine machine = machineProvider.get();
-            machine.setId(obj.getString("id"));
-            machine.setNumber(obj.getString("number"));
-            machine.setStatus(Status.valueOf(obj.getString("status")));
-            if (obj.has("timeRemaining")) {
-                machine.setTimeRemaining(obj.getInt("timeRemaining"));
+            machine.setId(m.getId());
+            machine.setNumber(m.getNumber());
+            machine.setStatus(Status.valueOf(m.getStatus()));
+            if (m.getTimeRemaining() >= 0) {
+                machine.setTimeRemaining(m.getTimeRemaining());
             } else {
                 machine.setTimeRemaining(Machine.NO_TIME);
             }
