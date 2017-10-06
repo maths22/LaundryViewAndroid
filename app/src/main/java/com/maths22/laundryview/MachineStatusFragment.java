@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,6 @@ import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
 import com.maths22.laundryview.data.MachineType;
-
-import org.acra.ACRA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,7 +181,6 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
                         return null;
                 }
             } catch (APIException e) {
-                ACRA.getErrorReporter().handleSilentException(e);
                 return null;
             }
         }

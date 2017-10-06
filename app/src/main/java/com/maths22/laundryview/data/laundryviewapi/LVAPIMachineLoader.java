@@ -2,14 +2,13 @@ package com.maths22.laundryview.data.laundryviewapi;
 
 import com.appspot.laundryview_1197.laundryView.LaundryView;
 import com.appspot.laundryview_1197.laundryView.model.RoomMachineStatus;
+import com.google.firebase.crash.FirebaseCrash;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
 import com.maths22.laundryview.data.MachineLoader;
 import com.maths22.laundryview.data.MachineType;
 import com.maths22.laundryview.data.Status;
-
-import org.acra.ACRA;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -52,7 +51,7 @@ public class LVAPIMachineLoader implements MachineLoader, Serializable {
                 throw new APIException("Server error");
             }
         } catch (IOException e) {
-            ACRA.getErrorReporter().handleException(e);
+            FirebaseCrash.report(e);
             throw new APIException(e);
         }
 

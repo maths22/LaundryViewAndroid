@@ -31,8 +31,6 @@ import com.maths22.laundryview.data.DataHandler;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.School;
 
-import org.acra.ACRA;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,18 +57,6 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
-                Intent intent = new Intent(LaundryRoomChooser.this, SchoolFinder.class);
-                startActivity(intent);
-            }
-        });*/
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         ButterKnife.bind(this);
 
         refreshLaundryRoomLayout.setOnRefreshListener(this);
@@ -96,16 +82,6 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
         });
 
         dataHandler = new DataHandler();
-
-        Intent intentUpdate = new Intent(this, UpdateReceiver.class);
-
-        // create the object
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        //set the alarm for particular time
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                5000, 60000,
-                PendingIntent.getBroadcast(this, 1, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT));
 
         // Obtain the shared Tracker instance.
         LaundryViewApplication application = (LaundryViewApplication) getApplication();
@@ -197,7 +173,7 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
                 schools[0].refresh();
                 return new ArrayList<>(schools[0].loadLaundryRooms());
             } catch (APIException e) {
-                ACRA.getErrorReporter().handleSilentException(e);
+                Log.e(e.getClass().getName(), "exception", e);
                 return null;
             }
         }

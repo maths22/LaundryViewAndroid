@@ -1,8 +1,12 @@
 package com.maths22.laundryview;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -69,7 +73,6 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
                 final String record = lr.getName() + "|" + lr.getId() + "|" + machine.getId();
                 alertSwitch.setChecked(objs.contains(record));
 
-
                 ((GradientDrawable) tvNumber.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color.redAccent));
                 break;
             case OUT_OF_SERVICE:
@@ -101,23 +104,23 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
                 if (machine.getStatus() == Status.IN_USE) {
                     final NotificationManager notifications = new NotificationManager(MachineStatusArrayAdapter.this.getContext());
                     if (isChecked) {
-                        notifications.setNotification(lr, machine);
+                        MachineStatusArrayAdapter.this.setNotification(notifications, machine, alertSwitch);
                         Snackbar.make(myView, "Alert set for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
                                 .setAction("Undo", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        notifications.removeNotification(lr, machine);
                                         alertSwitch.setChecked(false);
+                                        MachineStatusArrayAdapter.this.removeNotification(notifications, machine, alertSwitch);
                                     }
                                 }).show();
                     } else {
-                        notifications.removeNotification(lr, machine);
+                        MachineStatusArrayAdapter.this.removeNotification(notifications, machine, alertSwitch);
                         Snackbar.make(myView, "Alert removed for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
                                 .setAction("Undo", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        notifications.setNotification(lr, machine);
                                         alertSwitch.setChecked(true);
+                                        MachineStatusArrayAdapter.this.setNotification(notifications, machine, alertSwitch);
                                     }
                                 }).show();
                     }
@@ -126,5 +129,53 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         });
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    private void setNotification(final NotificationManager notifications, final Machine machine, final Switch alertSwitch) {
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                if(!notifications.setNotification(lr, machine)) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                            alertDialog.setTitle("Error");
+                            alertDialog.setMessage("Could not set notification.  Please try again later.");
+                            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                            alertDialog.show();
+
+                            alertSwitch.setChecked(false);
+                        }
+                    });
+                }
+            }
+        }).start();
+
+    }
+
+    private void removeNotification(final NotificationManager notifications, final Machine machine, final Switch alertSwitch) {
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                if(!notifications.removeNotification(lr, machine)) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                            alertDialog.setTitle("Error");
+                            alertDialog.setMessage("Could not unset notification.  Please try again later.");
+                            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                            alertDialog.show();
+
+                            alertSwitch.setChecked(true);
+                        }
+                    });
+                }
+            }
+        }).start();
+
     }
 }

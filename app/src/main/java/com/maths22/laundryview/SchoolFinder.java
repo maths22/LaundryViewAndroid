@@ -28,8 +28,6 @@ import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.DataHandler;
 import com.maths22.laundryview.data.School;
 
-import org.acra.ACRA;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,15 +56,6 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
         ButterKnife.bind(this);
         dataHandler = new DataHandler();
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SortedSet<School> schools = dataHandler.getSearcher().findSchools("chi");
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         schoolFinderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -193,7 +182,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
             try {
                 return new ArrayList<>(dataHandler.getSearcher().findSchools(query[0]));
             } catch (APIException e) {
-                ACRA.getErrorReporter().handleSilentException(e);
+                Log.e(e.getClass().getName(), "exception", e);
                 return null;
             }
         }
@@ -206,7 +195,6 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
                         alertDialog.setTitle("Error");
                         alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
                         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                        //TODO: test this dialog
 
                         alertDialog.show();
                         return;

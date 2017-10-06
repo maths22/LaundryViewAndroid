@@ -4,8 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -55,27 +53,18 @@
                 android:value="com.maths22.laundryview.LaundryRoomChooser" />
         </activity>
 
-        <receiver
-            android:name=".UpdateReceiver"
-            android:enabled="true"
-            android:exported="false"></receiver>
-
         <service
-            android:name=".UpdateService"
-            android:exported="false"></service>
-
-        <!-- Handle the creation, rotation, and updating of registration tokens -->
-        <service
-            android:name="com.maths22.laundryview.notifications.MyInstanceIDListenerService"
-            android:exported="false">
+            android:name="com.maths22.laundryview.notifications.LvMessagingService">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name="com.maths22.laundryview.notifications.RegistrationIntentService"
-            android:exported="false">
+            android:name="com.maths22.laundryview.notifications.LvInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
         </service>
     </application>
 

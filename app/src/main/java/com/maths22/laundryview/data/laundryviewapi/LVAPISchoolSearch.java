@@ -2,6 +2,7 @@ package com.maths22.laundryview.data.laundryviewapi;
 
 import com.appspot.laundryview_1197.laundryView.LaundryView;
 import com.appspot.laundryview_1197.laundryView.model.SchoolCollection;
+import com.google.firebase.crash.FirebaseCrash;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.School;
 import com.maths22.laundryview.data.SchoolSearch;
@@ -42,8 +43,11 @@ public class LVAPISchoolSearch implements SchoolSearch, Serializable {
                 throw new APIException("Server error");
             }
         } catch (IOException e) {
+            FirebaseCrash.report(e);
             throw new APIException(e);
         }
+
+        if(schools.getItems() == null) return set;
 
         for (com.appspot.laundryview_1197.laundryView.model.School school : schools.getItems()) {
             School s = schoolProvider.get();
