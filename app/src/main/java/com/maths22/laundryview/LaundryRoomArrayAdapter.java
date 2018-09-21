@@ -29,11 +29,11 @@ public class LaundryRoomArrayAdapter extends ArrayAdapter<LaundryRoom> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_laundry_room, parent, false);
         }
         // Lookup view for data population
-        TextView tvName = (TextView) convertView.findViewById(R.id.firstLine);
-        TextView tvHome = (TextView) convertView.findViewById(R.id.secondLine);
+        TextView tvName = convertView.findViewById(R.id.firstLine);
+        TextView tvHome = convertView.findViewById(R.id.secondLine);
         // Populate the data into the template view using the data object
         tvName.setText(room.getName());
-        tvHome.setText("TODO: Machine count");
+        //tvHome.setText("TODO: Machine count");
         tvHome.setVisibility(View.GONE);
         // Return the completed view to render on screen
         return convertView;

@@ -29,7 +29,7 @@ public class SchoolArrayAdapter extends ArrayAdapter<School> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_school, parent, false);
         }
         // Lookup view for data population
-        TextView tvName = (TextView) convertView.findViewById(R.id.firstLine);
+        TextView tvName = convertView.findViewById(R.id.firstLine);
         // Populate the data into the template view using the data object
         tvName.setText(school.getName());
         // Return the completed view to render on screen

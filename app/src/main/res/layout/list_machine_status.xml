@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip">
@@ -16,7 +17,9 @@
         android:textSize="24sp"
         android:background="@drawable/circle"
         android:paddingLeft="4sp"
-        android:paddingRight="4sp" />
+        android:paddingRight="4sp"
+        android:layout_marginEnd="6dip"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/secondLine"
@@ -29,7 +32,10 @@
         android:singleLine="true"
         android:text="Description"
         android:textSize="12sp"
-        android:clickable="false" />
+        android:clickable="false"
+        tools:ignore="HardcodedText"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/number" />
 
     <TextView
         android:id="@+id/firstLine"
@@ -42,7 +48,10 @@
         android:layout_toRightOf="@id/number"
         android:gravity="center_vertical"
         android:text="Example application"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_alignParentEnd="true"
+        tools:ignore="HardcodedText"
+        android:layout_toEndOf="@id/number" />
 
     <Switch
         android:layout_width="wrap_content"
@@ -63,6 +72,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/alertSwitch"
         android:layout_toStartOf="@+id/alertSwitch"
-        android:tint="#808080" />
+        android:tint="#808080"
+        android:contentDescription="@string/alert"/>
 
 </RelativeLayout>

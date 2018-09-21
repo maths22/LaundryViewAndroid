@@ -2,7 +2,7 @@ package com.maths22.laundryview.data.laundryviewapi;
 
 import com.appspot.laundryview_1197.laundryView.LaundryView;
 import com.appspot.laundryview_1197.laundryView.model.RoomMachineStatus;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
@@ -51,7 +51,7 @@ public class LVAPIMachineLoader implements MachineLoader, Serializable {
                 throw new APIException("Server error");
             }
         } catch (IOException e) {
-            FirebaseCrash.report(e);
+            Crashlytics.logException(e);
             throw new APIException(e);
         }
 

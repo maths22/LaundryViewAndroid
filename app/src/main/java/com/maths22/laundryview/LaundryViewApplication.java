@@ -1,6 +1,6 @@
 package com.maths22.laundryview;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -9,7 +9,7 @@ import com.google.android.gms.analytics.Tracker;
 /**
  * Created by maths22 on 10/30/15.
  */
-public class LaundryViewApplication extends Application {
+public class LaundryViewApplication extends MultiDexApplication {
     private Tracker mTracker;
 
     /**

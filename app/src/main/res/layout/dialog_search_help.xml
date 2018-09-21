@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -16,19 +17,22 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textView3"
-        android:text="http://laundryview.com/laundry_room.php?lr={NUMBER}" />
+        android:text="http://laundryview.com/laundry_room.php?lr={NUMBER}"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textView4"
-        android:text="http://laundryview.com/lvs.php?s={NUMBER}" />
+        android:text="http://laundryview.com/lvs.php?s={NUMBER}"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textView5"
-        android:text="http://laundryview.com/{LINK}" />
+        android:text="http://laundryview.com/{LINK}"
+        tools:ignore="HardcodedText" />
 </LinearLayout>

@@ -1,18 +1,21 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.maths22.laundryview"
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 27
         versionCode 9
         versionName '1.0'
+        multiDexEnabled true
     }
     buildTypes {
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -26,24 +29,25 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/laundryView-v1-1.21.0-SNAPSHOT.jar')
-    compile 'com.android.support:support-v13:25.3.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.google.dagger:dagger:2.0.1'
-    provided 'com.google.dagger:dagger-compiler:2.0.1'
-    compile 'org.glassfish:javax.annotation:10.0-b28'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.squareup.okhttp3:okhttp:3.9.0'
-    compile 'ch.acra:acra:4.6.2'
-    compile 'com.google.api-client:google-api-client-android:1.21.0'
-    compile 'com.google.android.gms:play-services-analytics:10.0.1'
-    compile 'com.google.firebase:firebase-messaging:10.0.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
-    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.0.1'
+    annotationProcessor 'com.jakewharton:butterknife:7.0.1'
     annotationProcessor 'com.google.guava:guava:22.0'
+    compileOnly 'com.google.dagger:dagger-compiler:2.0.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.support:support-v13:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.google.dagger:dagger:2.0.1'
+    implementation 'org.glassfish:javax.annotation:10.0-b28'
+    implementation 'com.jakewharton:butterknife:7.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.google.api-client:google-api-client-android:1.25.0'
+    implementation 'com.google.android.gms:play-services-analytics:16.0.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.2'
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    testImplementation 'junit:junit:4.12'
 }
 
 

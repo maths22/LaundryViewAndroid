@@ -2,9 +2,8 @@ package com.maths22.laundryview;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
 
@@ -68,7 +67,7 @@ public class NotificationManager {
             Response response = client.newCall(request).execute();
             if(!response.isSuccessful()) return false;
         } catch (IOException e) {
-            FirebaseCrash.report(e);
+            Crashlytics.logException(e);
             return false;
         }
 
@@ -111,7 +110,7 @@ public class NotificationManager {
             Response response = client.newCall(request).execute();
             if(!response.isSuccessful()) return false;
         } catch (IOException e) {
-            FirebaseCrash.report(e);
+            Crashlytics.logException(e);
             return false;
         }
 

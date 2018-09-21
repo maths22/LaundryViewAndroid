@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -50,7 +49,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_school_finder);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
@@ -144,7 +143,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default*/
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchView searchView = (SearchView) searchItem.getActionView();
         if (searchView != null) {
             searchView.setOnQueryTextListener(this);
             searchView.setIconifiedByDefault(false);
@@ -200,7 +199,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
                         return;
                     }
                     SchoolArrayAdapter adapter = new SchoolArrayAdapter(SchoolFinder.this, result);
-                    ListView listView = (ListView) findViewById(R.id.schoolListView);
+                    ListView listView = findViewById(R.id.schoolListView);
                     listView.setAdapter(adapter);
                     dialog.dismiss();
                 }

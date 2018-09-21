@@ -1,14 +1,14 @@
 package com.maths22.laundryview;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,19 +34,18 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
     @Bind(R.id.tabs)
     TabLayout tabs;
 
-    private DataHandler dataHandler;
     private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_machine_status);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        dataHandler = new DataHandler();
+        DataHandler dataHandler = new DataHandler();
 
 
         room = dataHandler.getLaundryRoom();
@@ -59,7 +58,7 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
 
         ButterKnife.bind(this);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager = findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabs.setupWithViewPager(viewPager);
 
@@ -79,7 +78,7 @@ public class MachineStatus extends AppCompatActivity implements MachineStatusFra
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        Adapter adapter = new Adapter(getFragmentManager());
+        Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(MachineStatusFragment.newInstance(room, MachineType.WASHER), "Washers");
         adapter.addFragment(MachineStatusFragment.newInstance(room, MachineType.DRYER), "Dryers");
         viewPager.setAdapter(adapter);

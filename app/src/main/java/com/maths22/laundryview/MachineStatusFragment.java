@@ -2,14 +2,14 @@ package com.maths22.laundryview;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,7 +99,7 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
             @Override
             public void onItemClick(AdapterView parent, View view,
                                     int position, long id) {
-                final Switch alertSwitch = (Switch) view.findViewById(R.id.alertSwitch);
+                final Switch alertSwitch = view.findViewById(R.id.alertSwitch);
                 alertSwitch.toggle();
             }
         });
@@ -114,15 +114,15 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context ctx) {
+        super.onAttach(ctx);
 
-        mActivity = activity;
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mActivity = (Activity) ctx;
+            mListener = (OnFragmentInteractionListener) ctx;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new ClassCastException(ctx.toString()
+                    + " must implement Activity, OnFragmentInteractionListener");
         }
     }
 
@@ -191,7 +191,7 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
                 alertDialog.setTitle("Error");
                 alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
                 alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mActivity.finish();
 

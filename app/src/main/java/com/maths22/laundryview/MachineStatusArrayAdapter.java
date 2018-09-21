@@ -2,7 +2,6 @@ package com.maths22.laundryview;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
@@ -48,11 +47,11 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         }
         final View myView = convertView;
         // Lookup view for data population
-        TextView tvNumber = (TextView) convertView.findViewById(R.id.number);
-        TextView tvName = (TextView) convertView.findViewById(R.id.firstLine);
-        TextView tvHome = (TextView) convertView.findViewById(R.id.secondLine);
-        final Switch alertSwitch = (Switch) convertView.findViewById(R.id.alertSwitch);
-        final ImageView alertIcon = (ImageView) convertView.findViewById(R.id.alertIcon);
+        TextView tvNumber = convertView.findViewById(R.id.number);
+        TextView tvName = convertView.findViewById(R.id.firstLine);
+        TextView tvHome = convertView.findViewById(R.id.secondLine);
+        final Switch alertSwitch = convertView.findViewById(R.id.alertSwitch);
+        final ImageView alertIcon = convertView.findViewById(R.id.alertIcon);
 
         // Populate the data into the template view using the data object
         tvNumber.setText(machine.getNumber());

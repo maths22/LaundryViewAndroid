@@ -3,13 +3,13 @@ package com.maths22.laundryview.data.laundryviewapi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
+import com.appspot.laundryview_1197.laundryView.LaundryView;
+
 import java.io.IOException;
 import java.io.Serializable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import com.appspot.laundryview_1197.laundryView.*;
 
 /**
  * Created by Jacob on 1/19/2016.

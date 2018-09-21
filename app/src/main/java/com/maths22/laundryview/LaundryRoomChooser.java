@@ -1,8 +1,6 @@
 package com.maths22.laundryview;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -11,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -54,7 +51,7 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_laundry_room_chooser);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
@@ -131,7 +128,7 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) searchItem.getActionView();
         if (searchView != null) {
             searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getComponentName()));
@@ -186,7 +183,7 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
                         alertDialog.setTitle("Error");
                         alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
                         alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 finish();
 

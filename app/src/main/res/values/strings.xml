@@ -10,6 +10,7 @@
     <string name="cant_find_location">Can\'t find your location?</string>
     <string name="search_suggestions">Search Suggestions</string>
     <string name="search_help_main">If you have a LaundryView link, try searching the number or word indicated below:</string>
+    <string name="alert">Alert</string>
     <plurals name="time_remaining">
         <item quantity="one">%d minute remaining</item>
         <item quantity="other">%d minutes remaining</item>
