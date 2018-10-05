@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -31,7 +30,7 @@ import com.maths22.laundryview.data.School;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -40,11 +39,10 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
 
     private DataHandler dataHandler;
     private Tracker mTracker;
-
-    @Bind(R.id.refreshLaundryRoomLayout)
+    @BindView(R.id.refreshLaundryRoomLayout)
     SwipeRefreshLayout refreshLaundryRoomLayout;
 
-    @Bind(R.id.laundryRoomListView)
+    @BindView(R.id.laundryRoomListView)
     ListView laundryRoomsListView;
 
     @Override
@@ -58,24 +56,20 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
 
         refreshLaundryRoomLayout.setOnRefreshListener(this);
 
-        laundryRoomsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View view,
-                                    int position, long id) {
-                LaundryRoomArrayAdapter arrayAdapter = (LaundryRoomArrayAdapter) parent.getAdapter();
-                LaundryRoom room = arrayAdapter.getItem(position);
-                SharedPreferences sharedPref = getSharedPreferences(
-                        getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("laundry_room_id", room.getId());
-                editor.putString("laundry_room_name", room.getName());
-                editor.apply();
+        laundryRoomsListView.setOnItemClickListener((parent, view, position, id) -> {
+            LaundryRoomArrayAdapter arrayAdapter = (LaundryRoomArrayAdapter) parent.getAdapter();
+            LaundryRoom room = arrayAdapter.getItem(position);
+            SharedPreferences sharedPref = getSharedPreferences(
+                    getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("laundry_room_id", room.getId());
+            editor.putString("laundry_room_name", room.getName());
+            editor.apply();
 
 
-                Intent intent = new Intent(LaundryRoomChooser.this, MachineStatus.class);
-                startActivity(intent);
+            Intent intent = new Intent(LaundryRoomChooser.this, MachineStatus.class);
+            startActivity(intent);
 
-            }
         });
 
         dataHandler = new DataHandler();
@@ -161,10 +155,17 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
                     "Loading. Please wait...", true);
         }
         refreshLaundryRoomLayout.setRefreshing(true);
-        new LoadLaundryRoomsTask().execute(dataHandler.getSchool());
+        new LoadLaundryRoomsTask(this).execute(dataHandler.getSchool());
     }
 
-    private class LoadLaundryRoomsTask extends AsyncTask<School, Integer, List<LaundryRoom>> {
+    private static class LoadLaundryRoomsTask extends AsyncTask<School, Integer, List<LaundryRoom>> {
+        private LaundryRoomChooser parent;
+
+        private LoadLaundryRoomsTask(LaundryRoomChooser parent) {
+            this.parent = parent;
+        }
+
+
         protected List<LaundryRoom> doInBackground(School... schools) {
             try {
                 schools[0].refresh();
@@ -176,29 +177,22 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
         }
 
         protected void onPostExecute(final List<LaundryRoom> result) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if (result == null) {
-                        AlertDialog alertDialog = new AlertDialog.Builder(LaundryRoomChooser.this).create();
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
-                        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
+            parent.runOnUiThread(() -> {
+                if (result == null) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(parent).create();
+                    alertDialog.setTitle("Error");
+                    alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", (dialog, which) -> parent.finish());
 
-                            }
-                        });
-
-                        alertDialog.show();
-                        return;
-                    }
-                    LaundryRoomArrayAdapter adapter = new LaundryRoomArrayAdapter(LaundryRoomChooser.this, result);
-                    laundryRoomsListView.setAdapter(adapter);
-                    refreshLaundryRoomLayout.setRefreshing(false);
-                    if (dialog != null) {
-                        dialog.dismiss();
-                    }
+                    alertDialog.show();
+                    return;
+                }
+                LaundryRoomArrayAdapter adapter = new LaundryRoomArrayAdapter(parent, result);
+                parent.laundryRoomsListView.setAdapter(adapter);
+                parent.refreshLaundryRoomLayout.setRefreshing(false);
+                if (parent.dialog != null) {
+                    parent.dialog.dismiss();
                 }
             });
         }

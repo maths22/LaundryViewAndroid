@@ -24,14 +24,14 @@ import com.maths22.laundryview.data.MachineType;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MachineStatus extends AppCompatActivity implements MachineStatusFragment.OnFragmentInteractionListener {
 
-    LaundryRoom room;
+    private transient LaundryRoom room;
 
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout tabs;
 
     private Tracker mTracker;

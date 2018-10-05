@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -30,16 +29,16 @@ import com.maths22.laundryview.data.School;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SchoolFinder extends AppCompatActivity implements android.support.v7.widget.SearchView.OnQueryTextListener {
 
-    @Bind(R.id.schoolListView)
+    @BindView(R.id.schoolListView)
     ListView schoolFinderListView;
-    @Bind(R.id.emptyLayout)
+    @BindView(R.id.emptyLayout)
     LinearLayout emptyLayout;
-    @Bind(R.id.searchSuggestions)
+    @BindView(R.id.searchSuggestions)
     Button searchSuggestions;
 
     private DataHandler dataHandler;
@@ -57,33 +56,26 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        schoolFinderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View view,
-                                    int position, long id) {
+        schoolFinderListView.setOnItemClickListener((parent, view, position, id) -> {
 
-                SchoolArrayAdapter arrayAdapter = (SchoolArrayAdapter) parent.getAdapter();
-                School school = arrayAdapter.getItem(position);
-                SharedPreferences sharedPref = getSharedPreferences(
-                        getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("school_id", school.getId());
-                editor.putString("school_name", school.getName());
-                editor.apply();
-                finish();
-            }
+            SchoolArrayAdapter arrayAdapter = (SchoolArrayAdapter) parent.getAdapter();
+            School school = arrayAdapter.getItem(position);
+            SharedPreferences sharedPref = getSharedPreferences(
+                    getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("school_id", school.getId());
+            editor.putString("school_name", school.getName());
+            editor.apply();
+            finish();
         });
 
         schoolFinderListView.setEmptyView(emptyLayout);
 
-        searchSuggestions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SchoolFinder.this);
-                builder.setView(R.layout.dialog_search_help);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
+        searchSuggestions.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SchoolFinder.this);
+            builder.setView(R.layout.dialog_search_help);
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
 
         // Obtain the shared Tracker instance.
@@ -121,7 +113,7 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
     private void runSearch(String query) {
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        new FindSchoolsTask().execute(query);
+        new FindSchoolsTask(this).execute(query);
     }
 
     @Override
@@ -176,10 +168,16 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
     }
 
 
-    private class FindSchoolsTask extends AsyncTask<String, Integer, List<School>> {
+    private static class FindSchoolsTask extends AsyncTask<String, Integer, List<School>> {
+        private SchoolFinder parent;
+
+        private FindSchoolsTask(SchoolFinder parent) {
+            this.parent = parent;
+        }
+
         protected List<School> doInBackground(String... query) {
             try {
-                return new ArrayList<>(dataHandler.getSearcher().findSchools(query[0]));
+                return new ArrayList<>(parent.dataHandler.getSearcher().findSchools(query[0]));
             } catch (APIException e) {
                 Log.e(e.getClass().getName(), "exception", e);
                 return null;
@@ -187,22 +185,20 @@ public class SchoolFinder extends AppCompatActivity implements android.support.v
         }
 
         protected void onPostExecute(final List<School> result) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if (result == null) {
-                        AlertDialog alertDialog = new AlertDialog.Builder(SchoolFinder.this).create();
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
-                        alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            parent.runOnUiThread(() -> {
+                if (result == null) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(parent).create();
+                    alertDialog.setTitle("Error");
+                    alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
 
-                        alertDialog.show();
-                        return;
-                    }
-                    SchoolArrayAdapter adapter = new SchoolArrayAdapter(SchoolFinder.this, result);
-                    ListView listView = findViewById(R.id.schoolListView);
-                    listView.setAdapter(adapter);
-                    dialog.dismiss();
+                    alertDialog.show();
+                    return;
                 }
+                SchoolArrayAdapter adapter = new SchoolArrayAdapter(parent, result);
+                ListView listView = parent.findViewById(R.id.schoolListView);
+                listView.setAdapter(adapter);
+                parent.dialog.dismiss();
             });
         }
     }

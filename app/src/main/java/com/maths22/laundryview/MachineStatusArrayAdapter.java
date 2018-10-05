@@ -6,13 +6,13 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -37,8 +37,9 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         this.lr = lr;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         // Get the data item for this position
         final Machine machine = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
@@ -67,7 +68,7 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
                 SharedPreferences sharedPref = getContext().getSharedPreferences(
                         getContext().getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
                 Set<String> objs = new HashSet<>(sharedPref.getStringSet(getContext().getString(R.string.notify_preference_file_key),
-                        new HashSet<String>()));
+                        new HashSet<>()));
 
                 final String record = lr.getName() + "|" + lr.getId() + "|" + machine.getId();
                 alertSwitch.setChecked(objs.contains(record));
@@ -97,32 +98,23 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
             tvHome.setVisibility(View.GONE);
         }
 
-        alertSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (machine.getStatus() == Status.IN_USE) {
-                    final NotificationManager notifications = new NotificationManager(MachineStatusArrayAdapter.this.getContext());
-                    if (isChecked) {
-                        MachineStatusArrayAdapter.this.setNotification(notifications, machine, alertSwitch);
-                        Snackbar.make(myView, "Alert set for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
-                                .setAction("Undo", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        alertSwitch.setChecked(false);
-                                        MachineStatusArrayAdapter.this.removeNotification(notifications, machine, alertSwitch);
-                                    }
-                                }).show();
-                    } else {
-                        MachineStatusArrayAdapter.this.removeNotification(notifications, machine, alertSwitch);
-                        Snackbar.make(myView, "Alert removed for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
-                                .setAction("Undo", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        alertSwitch.setChecked(true);
-                                        MachineStatusArrayAdapter.this.setNotification(notifications, machine, alertSwitch);
-                                    }
-                                }).show();
-                    }
+        alertSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (machine.getStatus() == Status.IN_USE) {
+                final NotificationManager notifications = new NotificationManager(MachineStatusArrayAdapter.this.getContext());
+                if (isChecked) {
+                    MachineStatusArrayAdapter.this.setNotification(notifications, machine, alertSwitch);
+                    Snackbar.make(myView, "Alert set for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
+                            .setAction("Undo", v -> {
+                                alertSwitch.setChecked(false);
+                                MachineStatusArrayAdapter.this.removeNotification(notifications, machine, alertSwitch);
+                            }).show();
+                } else {
+                    MachineStatusArrayAdapter.this.removeNotification(notifications, machine, alertSwitch);
+                    Snackbar.make(myView, "Alert removed for machine #" + machine.getNumber(), Snackbar.LENGTH_LONG)
+                            .setAction("Undo", v -> {
+                                alertSwitch.setChecked(true);
+                                MachineStatusArrayAdapter.this.setNotification(notifications, machine, alertSwitch);
+                            }).show();
                 }
             }
         });
@@ -131,49 +123,41 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
     }
 
     private void setNotification(final NotificationManager notifications, final Machine machine, final Switch alertSwitch) {
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                if(!notifications.setNotification(lr, machine)) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-                            alertDialog.setTitle("Error");
-                            alertDialog.setMessage("Could not set notification.  Please try again later.");
-                            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                            alertDialog.show();
+        alertSwitch.setEnabled(false);
+        new Thread(() -> {
+            Handler handler = new Handler(Looper.getMainLooper());
+            if(!notifications.setNotification(lr, machine)) {
+                handler.post(() -> {
+                    AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                    alertDialog.setTitle("Error");
+                    alertDialog.setMessage("Could not set notification.  Please try again later.");
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                    alertDialog.show();
 
-                            alertSwitch.setChecked(false);
-                        }
-                    });
-                }
+                    alertSwitch.setChecked(false);
+                });
             }
+            handler.post(() -> alertSwitch.setEnabled(true));
         }).start();
 
     }
 
     private void removeNotification(final NotificationManager notifications, final Machine machine, final Switch alertSwitch) {
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                if(!notifications.removeNotification(lr, machine)) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-                            alertDialog.setTitle("Error");
-                            alertDialog.setMessage("Could not unset notification.  Please try again later.");
-                            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                            alertDialog.show();
+        alertSwitch.setEnabled(false);
+        new Thread(() -> {
+            Handler handler = new Handler(Looper.getMainLooper());
+            if(!notifications.removeNotification(lr, machine)) {
+                handler.post(() -> {
+                    AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                    alertDialog.setTitle("Error");
+                    alertDialog.setMessage("Could not unset notification.  Please try again later.");
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                    alertDialog.show();
 
-                            alertSwitch.setChecked(true);
-                        }
-                    });
-                }
+                    alertSwitch.setChecked(true);
+                });
             }
+            handler.post(() -> alertSwitch.setEnabled(true));
         }).start();
 
     }

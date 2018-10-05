@@ -3,6 +3,7 @@ package com.maths22.laundryview;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -13,7 +14,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Switch;
 
@@ -25,7 +25,7 @@ import com.maths22.laundryview.data.MachineType;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -47,10 +47,10 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
     private OnFragmentInteractionListener mListener;
 
 
-    @Bind(R.id.machineStatusListView)
+    @BindView(R.id.machineStatusListView)
     ListView machineStatusListView;
 
-    @Bind(R.id.refreshMachineStatusLayout)
+    @BindView(R.id.refreshMachineStatusLayout)
     SwipeRefreshLayout refreshMachineStatusLayout;
 
     /**
@@ -88,20 +88,16 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_machine_status, container, false);
         ButterKnife.bind(this, v);
 
         refreshMachineStatusLayout.setOnRefreshListener(this);
 
-        machineStatusListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View view,
-                                    int position, long id) {
-                final Switch alertSwitch = view.findViewById(R.id.alertSwitch);
-                alertSwitch.toggle();
-            }
+        machineStatusListView.setOnItemClickListener((parent, view, position, id) -> {
+            final Switch alertSwitch = view.findViewById(R.id.alertSwitch);
+            alertSwitch.toggle();
         });
         return v;
     }
@@ -165,14 +161,20 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
                     "Loading. Please wait...", true);
         }
         refreshMachineStatusLayout.setRefreshing(true);
-        new LoadMachinesTask().execute(lr);
+        new LoadMachinesTask(this).execute(lr);
     }
 
-    private class LoadMachinesTask extends AsyncTask<LaundryRoom, Integer, List<Machine>> {
+    private static class LoadMachinesTask extends AsyncTask<LaundryRoom, Integer, List<Machine>> {
+        private MachineStatusFragment parent;
+
+        private LoadMachinesTask(MachineStatusFragment parent) {
+            this.parent = parent;
+        }
+
         protected List<Machine> doInBackground(LaundryRoom... lrs) {
             try {
                 lrs[0].refresh();
-                switch (type) {
+                switch (parent.type) {
                     case WASHER:
                         return new ArrayList<>(lrs[0].getWashers());
                     case DRYER:
@@ -187,29 +189,22 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
 
         protected void onPostExecute(final List<Machine> result) {
             if (result == null) {
-                AlertDialog alertDialog = new AlertDialog.Builder(mActivity).create();
+                AlertDialog alertDialog = new AlertDialog.Builder(parent.mActivity).create();
                 alertDialog.setTitle("Error");
                 alertDialog.setMessage("A network error has occured.  Please check your connection and try again.");
                 alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        mActivity.finish();
-
-                    }
-                });
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", (dialog, which) -> parent.mActivity.finish());
 
                 alertDialog.show();
                 return;
             }
-            mActivity.runOnUiThread(new Runnable() {
-                public void run() {
-                    MachineStatusArrayAdapter adapter = new MachineStatusArrayAdapter(getActivity(), result, lr);
-                    machineStatusListView.setAdapter(adapter);
-                    refreshMachineStatusLayout.setRefreshing(false);
+            parent.mActivity.runOnUiThread(() -> {
+                MachineStatusArrayAdapter adapter = new MachineStatusArrayAdapter(parent.getActivity(), result, parent.lr);
+                parent.machineStatusListView.setAdapter(adapter);
+                parent.refreshMachineStatusLayout.setRefreshing(false);
 
-                    if (dialog != null) {
-                        dialog.dismiss();
-                    }
+                if (parent.dialog != null) {
+                    parent.dialog.dismiss();
                 }
             });
         }

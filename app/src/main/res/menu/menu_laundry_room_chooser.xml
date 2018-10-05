@@ -6,5 +6,6 @@
         android:id="@+id/action_search"
         android:title="@string/search_hint"
         app:showAsAction="always"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:iconifiedByDefault="false" />
 </menu>

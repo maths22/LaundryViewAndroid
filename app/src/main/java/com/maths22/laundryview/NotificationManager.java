@@ -35,7 +35,7 @@ public class NotificationManager {
         SharedPreferences sharedPref = c.getSharedPreferences(
                 c.getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
         Set<String> objs = new HashSet<>(sharedPref.getStringSet(c.getString(R.string.notify_preference_file_key),
-                new HashSet<String>()));
+                new HashSet<>()));
         return objs.contains(record);
     }
 
@@ -60,7 +60,7 @@ public class NotificationManager {
 
         RequestBody body = RequestBody.create(JSON, jsonObj.toString());
         Request request = new Request.Builder()
-                .url("http://lvserver.maths22.com/registerMachine")
+                .url("http://lvserver2.maths22.com/registerMachine")
                 .post(body)
                 .build();
         try {
@@ -74,7 +74,7 @@ public class NotificationManager {
 
         SharedPreferences.Editor editor = sharedPref.edit();
         Set<String> objs = new HashSet<>(sharedPref.getStringSet(c.getString(R.string.notify_preference_file_key),
-                new HashSet<String>()));
+                new HashSet<>()));
 
         objs.add(machineId);
         editor.putStringSet(c.getString(R.string.notify_preference_file_key), objs);
@@ -103,7 +103,7 @@ public class NotificationManager {
 
         RequestBody body = RequestBody.create(JSON, jsonObj.toString());
         Request request = new Request.Builder()
-                .url("http://lvserver.maths22.com/unregisterMachine")
+                .url("http://lvserver2.maths22.com/unregisterMachine")
                 .post(body)
                 .build();
         try {
@@ -116,7 +116,7 @@ public class NotificationManager {
 
         SharedPreferences.Editor editor = sharedPref.edit();
         Set<String> objs = new HashSet<>(sharedPref.getStringSet(c.getString(R.string.notify_preference_file_key),
-                new HashSet<String>()));
+                new HashSet<>()));
 
         objs.remove(machineId);
         editor.putStringSet(c.getString(R.string.notify_preference_file_key), objs);

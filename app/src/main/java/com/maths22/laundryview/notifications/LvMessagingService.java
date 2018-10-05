@@ -22,7 +22,7 @@ public class LvMessagingService extends FirebaseMessagingService {
         Log.d(this.getClass().getName(), "Refreshed token: " + refreshedToken);
 
         SharedPreferences sharedPref = this.getSharedPreferences(
-                this.getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
+                this.getString(R.string.notify_preference_file_key), Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("firebase_token", refreshedToken);
@@ -35,7 +35,7 @@ public class LvMessagingService extends FirebaseMessagingService {
             SharedPreferences sharedPref = this.getSharedPreferences(
                     this.getString(R.string.school_preference_file_key), Context.MODE_PRIVATE);
             Set<String> objs = new HashSet<>(sharedPref.getStringSet(this.getString(R.string.notify_preference_file_key),
-                    new HashSet<String>()));
+                    new HashSet<>()));
 
             objs.remove(remoteMessage.getData().get("completed"));
             SharedPreferences.Editor editor = sharedPref.edit();
