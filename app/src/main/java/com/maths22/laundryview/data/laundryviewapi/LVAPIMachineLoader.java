@@ -1,8 +1,6 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
-import com.appspot.laundryview_1197.laundryView.LaundryView;
-import com.appspot.laundryview_1197.laundryView.model.RoomMachineStatus;
-import com.crashlytics.android.Crashlytics;
+import com.google.common.collect.ImmutableMap;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
@@ -10,7 +8,6 @@ import com.maths22.laundryview.data.MachineLoader;
 import com.maths22.laundryview.data.MachineType;
 import com.maths22.laundryview.data.Status;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -41,35 +38,30 @@ public class LVAPIMachineLoader implements MachineLoader, Serializable {
         Map<MachineType, Collection<Machine>> ret = new EnumMap<>(MachineType.class);
 
 
-        LaundryView.LaundryViewEndpoint service = client.getService();
+        Map<String, List<Map<String, Object>>> machines;
+        machines = client.request("machineStatus", ImmutableMap.of("roomId", laundryRoom.getId()), Map.class);
 
-        RoomMachineStatus machines;
 
-        try {
-            machines = service.machineStatus(laundryRoom.getId()).execute();
-            if (machines == null) {
-                throw new APIException("Server error");
-            }
-        } catch (IOException e) {
-            Crashlytics.logException(e);
-            throw new APIException(e);
+        if (machines == null) {
+            throw new APIException("Server error");
         }
 
-        ret.put(MachineType.WASHER, readJsonSet(machines.getWashers()));
-        ret.put(MachineType.DRYER, readJsonSet(machines.getDryers()));
+        ret.put(MachineType.WASHER, readJsonSet(machines.get("washers")));
+        ret.put(MachineType.DRYER, readJsonSet(machines.get("dryers")));
 
         return ret;
     }
 
-    private Collection<Machine> readJsonSet(List<com.appspot.laundryview_1197.laundryView.model.Machine> machines)  {
+    private Collection<Machine> readJsonSet(List<Map<String, Object>> machines)  {
         SortedSet<Machine> set = new TreeSet<>();
-        for (com.appspot.laundryview_1197.laundryView.model.Machine m : machines) {
+        for (Map<String, Object> m : machines) {
             Machine machine = machineProvider.get();
-            machine.setId(m.getId());
-            machine.setNumber(m.getNumber());
-            machine.setStatus(Status.valueOf(m.getStatus()));
-            if (m.getTimeRemaining() >= 0) {
-                machine.setTimeRemaining(m.getTimeRemaining());
+            machine.setId((String) m.get("id"));
+            machine.setNumber((String) m.get("number"));
+            machine.setStatus(Status.valueOf((String) m.get("status")));
+            int remaining = ((Double)m.get("timeRemaining")).intValue();
+            if (remaining >= 0) {
+                machine.setTimeRemaining(remaining);
             } else {
                 machine.setTimeRemaining(Machine.NO_TIME);
             }

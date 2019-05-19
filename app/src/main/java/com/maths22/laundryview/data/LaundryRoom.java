@@ -1,6 +1,6 @@
 package com.maths22.laundryview.data;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -19,11 +19,10 @@ public class LaundryRoom implements Comparable<LaundryRoom>, Serializable {
     private String name;
     private SortedSet<Machine> washers;
     private SortedSet<Machine> dryers;
-    private MachineLoader loader;
+    private transient DataHandler handler;
 
     @Inject
-    public LaundryRoom(MachineLoader loader) {
-        this.loader = loader;
+    public LaundryRoom() {
     }
 
     public String getId() {
@@ -49,7 +48,8 @@ public class LaundryRoom implements Comparable<LaundryRoom>, Serializable {
     }
 
     private void loadWashersAndDryers() throws APIException {
-        Map<MachineType, Collection<Machine>> machines = loader.findMachines(this);
+        if(handler == null) handler = new DataHandler();
+        Map<MachineType, Collection<Machine>> machines = handler.getMachineLoader().findMachines(this);
         washers = new TreeSet<>(machines.get(MachineType.WASHER));
         dryers = new TreeSet<>(machines.get(MachineType.DRYER));
     }

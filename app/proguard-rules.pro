@@ -50,3 +50,7 @@
 
 -dontwarn com.google.errorprone.**
 -dontwarn java.lang.ClassValue
+
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception

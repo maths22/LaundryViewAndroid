@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".LaundryViewApplication"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".SchoolFinder"
             android:label="@string/title_activity_school_finder"

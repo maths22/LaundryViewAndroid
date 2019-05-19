@@ -3,14 +3,14 @@ package com.maths22.laundryview;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,6 +160,7 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
             dialog = ProgressDialog.show(getActivity(), "",
                     "Loading. Please wait...", true);
         }
+
         refreshMachineStatusLayout.setRefreshing(true);
         new LoadMachinesTask(this).execute(lr);
     }
@@ -196,16 +197,16 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
                 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", (dialog, which) -> parent.mActivity.finish());
 
                 alertDialog.show();
+
+                parent.mActivity.runOnUiThread(() -> {
+                    parent.refreshMachineStatusLayout.setRefreshing(false);
+                });
                 return;
             }
             parent.mActivity.runOnUiThread(() -> {
                 MachineStatusArrayAdapter adapter = new MachineStatusArrayAdapter(parent.getActivity(), result, parent.lr);
                 parent.machineStatusListView.setAdapter(adapter);
                 parent.refreshMachineStatusLayout.setRefreshing(false);
-
-                if (parent.dialog != null) {
-                    parent.dialog.dismiss();
-                }
             });
         }
     }

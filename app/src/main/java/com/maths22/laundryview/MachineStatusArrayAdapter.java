@@ -6,13 +6,14 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -99,6 +100,10 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         }
 
         alertSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(buttonView.getTag() != null) {
+                buttonView.setTag(null);
+                return;
+            }
             if (machine.getStatus() == Status.IN_USE) {
                 final NotificationManager notifications = new NotificationManager(MachineStatusArrayAdapter.this.getContext());
                 if (isChecked) {
@@ -128,16 +133,18 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
             Handler handler = new Handler(Looper.getMainLooper());
             if(!notifications.setNotification(lr, machine)) {
                 handler.post(() -> {
+                    alertSwitch.setTag("no");
+                    alertSwitch.setEnabled(true);
+                    alertSwitch.setChecked(false);
                     AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
                     alertDialog.setTitle("Error");
                     alertDialog.setMessage("Could not set notification.  Please try again later.");
                     alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
                     alertDialog.show();
-
-                    alertSwitch.setChecked(false);
                 });
+            } else {
+                handler.post(() -> alertSwitch.setEnabled(true));
             }
-            handler.post(() -> alertSwitch.setEnabled(true));
         }).start();
 
     }
@@ -148,16 +155,19 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
             Handler handler = new Handler(Looper.getMainLooper());
             if(!notifications.removeNotification(lr, machine)) {
                 handler.post(() -> {
+                    alertSwitch.setTag("no");
+                    alertSwitch.setEnabled(true);
+                    alertSwitch.setChecked(true);
                     AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
                     alertDialog.setTitle("Error");
                     alertDialog.setMessage("Could not unset notification.  Please try again later.");
                     alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
                     alertDialog.show();
-
-                    alertSwitch.setChecked(true);
                 });
+            } else {
+                handler.post(() -> alertSwitch.setEnabled(true));
+
             }
-            handler.post(() -> alertSwitch.setEnabled(true));
         }).start();
 
     }

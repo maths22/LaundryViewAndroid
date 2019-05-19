@@ -18,6 +18,8 @@ public class DataHandler {
     SchoolSearch searcher;
     @Inject
     LaundryRoom laundryRoom;
+    @Inject
+    MachineLoader machineLoader;
 
     @Singleton
     @Component(modules = LVAPIDataModule.class)
@@ -50,5 +52,14 @@ public class DataHandler {
         }
         return laundryRoom;
     }
+
+
+    public MachineLoader getMachineLoader() {
+        if (machineLoader == null) {
+            this.configure();
+        }
+        return machineLoader;
+    }
+
 
 }

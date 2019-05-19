@@ -1,40 +1,68 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.gson.Gson;
 
-import com.appspot.laundryview_1197.laundryView.LaundryView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by Jacob on 1/19/2016.
  */
 @Singleton
 public class LVAPIClient implements Serializable {
-    transient private LaundryView.LaundryViewEndpoint service;
+
+    private final String endpoint;
 
     @Inject
     public LVAPIClient() {
-        this.service = initializeService();
+        this.endpoint = "https://lvapi.maths22.com/lv_api";
     }
 
-    private LaundryView.LaundryViewEndpoint initializeService() {
-        LaundryView laundryView = new LaundryView(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
-        return laundryView.laundryViewEndpoint();
-    }
+    public <T> T request(String method, Map<String, Object> args, Class<T> clazz) {
+        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient client = new OkHttpClient();
 
-    public LaundryView.LaundryViewEndpoint getService() {
-        return service;
-    }
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("method", method);
+            jsonObj.put("args", new JSONObject(args));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        this.service = initializeService();
+        RequestBody body = RequestBody.create(JSON, jsonObj.toString());
+        Request request = new Request.Builder()
+                .url(this.endpoint)
+                .post(body)
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            if(!response.isSuccessful()) return null;
+            Gson gson = new Gson();
+
+
+            return gson.fromJson(response.body().string(), clazz);
+        } catch (IOException e) {
+            Crashlytics.logException(e);
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.collect.ImmutableMap;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
+import com.maths22.laundryview.data.laundryviewapi.LVAPIClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,9 +26,11 @@ import okhttp3.Response;
  * Created by maths22 on 11/5/15.
  */
 public class NotificationManager {
+    private final LVAPIClient client;
     Context c;
 
     public NotificationManager(Context context) {
+        client = new LVAPIClient();
         c = context;
     }
 
@@ -47,27 +51,10 @@ public class NotificationManager {
         String machineId = lr.getName() + "|" + lr.getId() + "|" + machine.getId();
         if(requesterId == null) return false;
 
-        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient client = new OkHttpClient();
 
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("requesterId", requesterId);
-            jsonObj.put("machineId", machineId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RequestBody body = RequestBody.create(JSON, jsonObj.toString());
-        Request request = new Request.Builder()
-                .url("http://lvserver2.maths22.com/registerMachine")
-                .post(body)
-                .build();
-        try {
-            Response response = client.newCall(request).execute();
-            if(!response.isSuccessful()) return false;
-        } catch (IOException e) {
-            Crashlytics.logException(e);
+        if(client.request("registerMachine",
+                ImmutableMap.of("requesterId", requesterId, "machineId", machineId),
+                String.class) == null) {
             return false;
         }
 
@@ -90,27 +77,9 @@ public class NotificationManager {
         String machineId = lr.getName() + "|" + lr.getId() + "|" + machine.getId();
         if(requesterId == null) return false;
 
-        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient client = new OkHttpClient();
-
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("requesterId", requesterId);
-            jsonObj.put("machineId", machineId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RequestBody body = RequestBody.create(JSON, jsonObj.toString());
-        Request request = new Request.Builder()
-                .url("http://lvserver2.maths22.com/unregisterMachine")
-                .post(body)
-                .build();
-        try {
-            Response response = client.newCall(request).execute();
-            if(!response.isSuccessful()) return false;
-        } catch (IOException e) {
-            Crashlytics.logException(e);
+        if(client.request("registerMachine",
+                ImmutableMap.of("requesterId", requesterId, "machineId", machineId),
+                String.class) == null) {
             return false;
         }
 
