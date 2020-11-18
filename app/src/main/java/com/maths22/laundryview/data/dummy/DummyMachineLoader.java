@@ -15,8 +15,8 @@ import javax.inject.Inject;
  * Created by maths22 on 10/27/15.
  */
 public class DummyMachineLoader implements MachineLoader {
-    private Machine machine1;
-    private Machine machine2;
+    private final Machine machine1;
+    private final Machine machine2;
 
     @Inject
     public DummyMachineLoader(Machine machine1, Machine machine2) {

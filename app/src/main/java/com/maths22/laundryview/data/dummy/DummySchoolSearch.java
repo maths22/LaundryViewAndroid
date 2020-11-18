@@ -13,7 +13,7 @@ import javax.inject.Inject;
  */
 public class DummySchoolSearch implements SchoolSearch {
 
-    private School school;
+    private final School school;
 
     @Inject
     public DummySchoolSearch(School school) {

@@ -3,8 +3,6 @@ package com.maths22.laundryview.data;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 /**
  * Created by maths22 on 10/27/15.
  */

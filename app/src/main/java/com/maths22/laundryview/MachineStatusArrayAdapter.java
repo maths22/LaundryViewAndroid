@@ -8,14 +8,14 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.maths22.laundryview.data.LaundryRoom;
@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
 
-    LaundryRoom lr;
+    final LaundryRoom lr;
 
     public MachineStatusArrayAdapter(Context context, List<Machine> users, LaundryRoom lr) {
         super(context, 0, users);
@@ -52,7 +52,7 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         TextView tvNumber = convertView.findViewById(R.id.number);
         TextView tvName = convertView.findViewById(R.id.firstLine);
         TextView tvHome = convertView.findViewById(R.id.secondLine);
-        final Switch alertSwitch = convertView.findViewById(R.id.alertSwitch);
+        final SwitchCompat alertSwitch = convertView.findViewById(R.id.alertSwitch);
         final ImageView alertIcon = convertView.findViewById(R.id.alertIcon);
 
         // Populate the data into the template view using the data object
@@ -127,7 +127,7 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
         return convertView;
     }
 
-    private void setNotification(final NotificationManager notifications, final Machine machine, final Switch alertSwitch) {
+    private void setNotification(final NotificationManager notifications, final Machine machine, final SwitchCompat alertSwitch) {
         alertSwitch.setEnabled(false);
         new Thread(() -> {
             Handler handler = new Handler(Looper.getMainLooper());
@@ -149,7 +149,7 @@ public class MachineStatusArrayAdapter extends ArrayAdapter<Machine> {
 
     }
 
-    private void removeNotification(final NotificationManager notifications, final Machine machine, final Switch alertSwitch) {
+    private void removeNotification(final NotificationManager notifications, final Machine machine, final SwitchCompat alertSwitch) {
         alertSwitch.setEnabled(false);
         new Thread(() -> {
             Handler handler = new Handler(Looper.getMainLooper());

@@ -1,14 +1,10 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
-import com.appspot.laundryview_1197.laundryView.LaundryView;
-import com.appspot.laundryview_1197.laundryView.model.SchoolCollection;
-import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.ImmutableMap;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.School;
 import com.maths22.laundryview.data.SchoolSearch;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +20,8 @@ import javax.inject.Provider;
 //TODO: Real error handling
 public class LVAPISchoolSearch implements SchoolSearch, Serializable {
 
-    private Provider<School> schoolProvider;
-    private LVAPIClient client;
+    private final Provider<School> schoolProvider;
+    private final LVAPIClient client;
 
     @Inject
     public LVAPISchoolSearch(Provider<School> schoolProvider, LVAPIClient client) {

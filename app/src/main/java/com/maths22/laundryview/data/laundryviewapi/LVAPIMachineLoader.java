@@ -24,8 +24,8 @@ import javax.inject.Provider;
  */
 //TODO: Real error handling
 public class LVAPIMachineLoader implements MachineLoader, Serializable {
-    private Provider<Machine> machineProvider;
-    private LVAPIClient client;
+    private final Provider<Machine> machineProvider;
+    private final LVAPIClient client;
 
     @Inject
     public LVAPIMachineLoader(Provider<Machine> machineProvider, LVAPIClient client) {

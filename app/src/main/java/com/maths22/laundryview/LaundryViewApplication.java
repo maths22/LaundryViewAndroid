@@ -26,9 +26,4 @@ public class LaundryViewApplication extends MultiDexApplication {
     }
 
 
-    @Override
-    public final void onCreate() {
-        super.onCreate();
-        SoLoader.init(this, false);
-    }
 }

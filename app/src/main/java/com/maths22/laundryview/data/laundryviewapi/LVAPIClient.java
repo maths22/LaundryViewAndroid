@@ -1,10 +1,7 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +57,7 @@ public class LVAPIClient implements Serializable {
 
             return gson.fromJson(response.body().string(), clazz);
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
             e.printStackTrace();
             return null;
         }

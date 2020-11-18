@@ -3,31 +3,20 @@ package com.maths22.laundryview;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.ImmutableMap;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.Machine;
 import com.maths22.laundryview.data.laundryviewapi.LVAPIClient;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by maths22 on 11/5/15.
  */
 public class NotificationManager {
     private final LVAPIClient client;
-    Context c;
+    final Context c;
 
     public NotificationManager(Context context) {
         client = new LVAPIClient();

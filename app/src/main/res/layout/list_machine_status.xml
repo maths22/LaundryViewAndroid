@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
@@ -53,7 +54,7 @@
         tools:ignore="HardcodedText"
         android:layout_toEndOf="@id/number" />
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/alertSwitch"
@@ -72,7 +73,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/alertSwitch"
         android:layout_toStartOf="@+id/alertSwitch"
-        android:tint="#808080"
-        android:contentDescription="@string/alert"/>
+        android:contentDescription="@string/alert"
+        app:tint="#808080" />
 
 </RelativeLayout>

@@ -1,17 +1,11 @@
 package com.maths22.laundryview.data.laundryviewapi;
 
-import com.appspot.laundryview_1197.laundryView.LaundryView;
-import com.appspot.laundryview_1197.laundryView.model.LaundryRoomCollection;
-import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.ImmutableMap;
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
 import com.maths22.laundryview.data.LaundryRoomLoader;
 import com.maths22.laundryview.data.School;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +21,8 @@ import javax.inject.Provider;
  */
 //TODO: Real error handling
 public class LVAPILaundryRoomLoader implements LaundryRoomLoader, Serializable {
-    private Provider<LaundryRoom> laundryRoomProvider;
-    private LVAPIClient client;
+    private final Provider<LaundryRoom> laundryRoomProvider;
+    private final LVAPIClient client;
 
     @Inject
     public LVAPILaundryRoomLoader(Provider<LaundryRoom> laundryRoomProvider, LVAPIClient client) {

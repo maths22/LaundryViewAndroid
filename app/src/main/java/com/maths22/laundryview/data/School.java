@@ -16,7 +16,7 @@ public class School implements Comparable<School>, Serializable {
     private String id;
     private String name;
     private SortedSet<LaundryRoom> laundryRooms;
-    private LaundryRoomLoader loader;
+    private final LaundryRoomLoader loader;
 
     @Inject
     public School(LaundryRoomLoader loader) {

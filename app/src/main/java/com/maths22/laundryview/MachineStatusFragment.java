@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -15,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Switch;
 
 import com.maths22.laundryview.data.APIException;
 import com.maths22.laundryview.data.LaundryRoom;
@@ -96,7 +96,7 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
         refreshMachineStatusLayout.setOnRefreshListener(this);
 
         machineStatusListView.setOnItemClickListener((parent, view, position, id) -> {
-            final Switch alertSwitch = view.findViewById(R.id.alertSwitch);
+            final SwitchCompat alertSwitch = view.findViewById(R.id.alertSwitch);
             alertSwitch.toggle();
         });
         return v;
@@ -166,7 +166,7 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
     }
 
     private static class LoadMachinesTask extends AsyncTask<LaundryRoom, Integer, List<Machine>> {
-        private MachineStatusFragment parent;
+        private final MachineStatusFragment parent;
 
         private LoadMachinesTask(MachineStatusFragment parent) {
             this.parent = parent;
@@ -198,9 +198,7 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
 
                 alertDialog.show();
 
-                parent.mActivity.runOnUiThread(() -> {
-                    parent.refreshMachineStatusLayout.setRefreshing(false);
-                });
+                parent.mActivity.runOnUiThread(() -> parent.refreshMachineStatusLayout.setRefreshing(false));
                 return;
             }
             parent.mActivity.runOnUiThread(() -> {
@@ -208,6 +206,9 @@ public class MachineStatusFragment extends Fragment implements SwipeRefreshLayou
                 parent.machineStatusListView.setAdapter(adapter);
                 parent.refreshMachineStatusLayout.setRefreshing(false);
             });
+            if (parent.dialog != null) {
+                parent.dialog.dismiss();
+            }
         }
     }
 

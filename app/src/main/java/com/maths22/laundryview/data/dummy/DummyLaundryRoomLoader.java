@@ -14,7 +14,7 @@ import javax.inject.Inject;
  * Created by maths22 on 10/27/15.
  */
 public class DummyLaundryRoomLoader implements LaundryRoomLoader {
-    private LaundryRoom room;
+    private final LaundryRoom room;
 
     @Inject
     public DummyLaundryRoomLoader(LaundryRoom room) {

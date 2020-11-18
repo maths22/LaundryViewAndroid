@@ -159,7 +159,7 @@ public class LaundryRoomChooser extends AppCompatActivity implements SwipeRefres
     }
 
     private static class LoadLaundryRoomsTask extends AsyncTask<School, Integer, List<LaundryRoom>> {
-        private LaundryRoomChooser parent;
+        private final LaundryRoomChooser parent;
 
         private LoadLaundryRoomsTask(LaundryRoomChooser parent) {
             this.parent = parent;

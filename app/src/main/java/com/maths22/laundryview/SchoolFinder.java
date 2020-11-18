@@ -168,7 +168,7 @@ public class SchoolFinder extends AppCompatActivity implements androidx.appcompa
 
 
     private static class FindSchoolsTask extends AsyncTask<String, Integer, List<School>> {
-        private SchoolFinder parent;
+        private final SchoolFinder parent;
 
         private FindSchoolsTask(SchoolFinder parent) {
             this.parent = parent;
